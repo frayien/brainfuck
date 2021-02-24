@@ -6,48 +6,45 @@
 
 struct Config
 {
+    std::string input = "echo.bf";
     std::string output = "output.cpp";
     std::string appName = "App.exe";
-    bool executeWhenFinished = true;
+    bool executeWhenFinished = false;
 } config;
 
-std::string transcompile(std::string const& brainfuckRaw)
+void transcompile(std::istream & in, std::ostream & out)
 {
-    std::stringstream ccode;
-
-    ccode << "#include <cstdio>\n";
-    ccode << "#include <iostream>\n";
-    ccode << "int main() {";
-    ccode << "char buffer[30000] = {0};";
-    ccode << "char *ptr = buffer;";
-
-    for(char c : brainfuckRaw) {
-        switch (c)
+    out << "#include <iostream>\n";
+    out << "#include <cstdio>\n";
+    out << "int main() {";
+    out << "char buffer[30000] = {0};";
+    out << "char *ptr = buffer;";
+    
+    while(!in.eof()) {
+        switch (in.get())
         {
-        case '>': ccode << "ptr++;"; break;
-        case '<': ccode << "ptr--;"; break;
-        case '+': ccode << "++(*ptr);"; break;
-        case '-': ccode << "--(*ptr);"; break;
-        case '.': ccode << "putchar(*ptr);"; break;
-        case '?': ccode << "std::cout << (int) *ptr << ' ';"; break;
-        case ',': ccode << "*ptr=getchar();"; break;
-        case '[': ccode << "while(*ptr){"; break;
-        case ']': ccode << "}"; break;
+        case '>': out << "ptr++;"; break;
+        case '<': out << "ptr--;"; break;
+        case '+': out << "++(*ptr);"; break;
+        case '-': out << "--(*ptr);"; break;
+        case '.': out << "putchar(*ptr);"; break;
+        case '?': out << "std::cout << (int) *ptr << ' ';"; break;
+        case ',': out << "*ptr=getchar();"; break;
+        case '[': out << "while(*ptr){"; break;
+        case ']': out << "}"; break;
         
         default: break;
         }
     }
 
-    ccode << "return 0;}";
-
-    return ccode.str();
+    out << "return 0;}";
 }
 
-int compile(std::string brainfuckRaw) 
+int compile(std::istream & in) 
 {
     std::ofstream ofs(config.output);
 
-    ofs << transcompile(brainfuckRaw);
+    transcompile(in, ofs);
 
     ofs.close();
 
@@ -56,17 +53,51 @@ int compile(std::string brainfuckRaw)
 
 void loadConfig(int argc, char *argv[])
 {
-    
+    int i = 1;
+    while(i < argc)
+    {
+        std::string cmd(argv[i++]);
+        if(cmd == "-o")
+        {
+            if(i < argc)
+            {
+                config.appName = argv[i++];
+            }
+        }
+        else if(cmd == "-i")
+        {
+            if(i < argc)
+            {
+                config.input = argv[i++];
+            }
+        }
+        else if(cmd == "-t")
+        {
+            if(i < argc)
+            {
+                config.output = argv[i++];
+            }
+        }
+        else if(cmd == "-exe")
+        {
+            config.executeWhenFinished = true;
+        }
+        else if(cmd == "-noexe")
+        {
+            config.executeWhenFinished = false;
+        }
+    }
 }
 
 int main(int argc, char *argv[]) 
 {
-    config.executeWhenFinished = false;
     loadConfig(argc, argv);
 
-    std::string brainfuckRaw = ">----------[++++++++++>,----------]++++++++++[<]>[.>]";
+    std::ifstream in(config.input);
 
-    compile(brainfuckRaw);
+    compile(in);
+
+    in.close();
 
     if(config.executeWhenFinished) 
     {
