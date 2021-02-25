@@ -19,5 +19,5 @@ store input to 32
 32 [-] set 0
 32 > goto 33
 33 ++++++++++[----------,++++++++++>] store input
-? <[<] backto 32
-32
+?? <[<] backto 32
+32 

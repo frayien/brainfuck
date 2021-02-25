@@ -28,7 +28,7 @@ void transcompile(std::istream & in, std::ostream & out)
         case '+': out << "++(*ptr);"; break;
         case '-': out << "--(*ptr);"; break;
         case '.': out << "putchar(*ptr);"; break;
-        case '?': out << "std::cout << (int) *ptr << ' ';"; break;
+        //case '?': out << "std::cout << (int) *ptr << ' ';"; break;
         case ',': out << "*ptr=getchar();"; break;
         case '[': out << "while(*ptr){"; break;
         case ']': out << "}"; break;
