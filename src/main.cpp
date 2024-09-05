@@ -6,7 +6,7 @@
 
 struct Config
 {
-    std::string input = "test.xbf";
+    std::string input = "bca.bf";
     std::string cpp_tmp_file = "_tmp_.cpp";
     std::string bf_tmp_file = "_tmp_.bf";
     std::string appName = "App.exe";
