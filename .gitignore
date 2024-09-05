@@ -36,6 +36,6 @@ obj/*
 .vscode/*
 
 output.cpp
-
+_tmp_.*
 *.ilk
 *.pdb
